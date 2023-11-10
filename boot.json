@@ -1,0 +1,33 @@
+{
+  "name": "SimpleCryptWrapper",
+  "version": "1.0.0",
+  "styleFileList": [
+  ],
+  "scriptFileList_earlyload": [
+    "dist/earlyload/earlyload.js"
+  ],
+  "scriptFileList_inject_early": [
+    "dist/inject_early/inject_early.js",
+    "dist/SimpleCryptWrapper.js"
+  ],
+  "scriptFileList_preload": [
+    "dist/preload/preload.js"
+  ],
+  "scriptFileList": [
+  ],
+  "tweeFileList": [
+  ],
+  "imgFileList": [
+  ],
+  "imgFileReplaceList": [
+  ],
+  "additionFile": [
+    "README.md"
+  ],
+  "dependenceInfo": [
+    {
+      "modName": "ModLoader",
+      "version": "^2.5.0"
+    }
+  ]
+}
