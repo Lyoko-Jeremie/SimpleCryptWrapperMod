@@ -1,4 +1,4 @@
 (async () => {
-    console.warn('SimpleCryptWrapper preload done', window.modUtils.getNowRunningModName());
-    window.modUtils.getLogger().warn(`SimpleCryptWrapper preload done ${window.modUtils.getNowRunningModName()}`);
+    // console.warn('SimpleCryptWrapper preload done', window.modUtils.getNowRunningModName());
+    // window.modUtils.getLogger().warn(`SimpleCryptWrapper preload done ${window.modUtils.getNowRunningModName()}`);
 })();
