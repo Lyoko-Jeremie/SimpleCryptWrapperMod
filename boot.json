@@ -4,14 +4,11 @@
   "styleFileList": [
   ],
   "scriptFileList_earlyload": [
-    "dist/earlyload/earlyload.js"
   ],
   "scriptFileList_inject_early": [
-    "dist/inject_early/inject_early.js",
     "dist/SimpleCryptWrapper.js"
   ],
   "scriptFileList_preload": [
-    "dist/preload/preload.js"
   ],
   "scriptFileList": [
   ],
@@ -24,10 +21,18 @@
   "additionFile": [
     "README.md"
   ],
+  "additionBinaryFile": [
+  ],
+  "addonPlugin": [
+  ],
   "dependenceInfo": [
     {
       "modName": "ModLoader",
-      "version": "^2.5.0"
+      "version": "^2.5.1"
+    },
+    {
+      "modName": "SweetAlert2Mod",
+      "version": "^1.0.0"
     }
   ]
 }
