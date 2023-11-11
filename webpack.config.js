@@ -88,6 +88,11 @@ const config = {
     alias: {
       // GM_config: './src/libs/GM_config/gm_config.js',
     },
+    fallback: {
+      // for libsodium
+      // only in browser
+      crypto: false,
+    },
   },
 };
 
