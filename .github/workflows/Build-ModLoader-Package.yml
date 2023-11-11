@@ -18,7 +18,7 @@ jobs:
 
       matrix:
         # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
-        os: [ ubuntu-latest ]
+        os: [ ubuntu-latest , windows-latest ]
         node-version: [ 18.x ]
 
     steps:
@@ -60,7 +60,11 @@ jobs:
           yarn run build:webpack
           yarn run webpack:tools
 
-      - name: Copy output dir
+      - name: Copy output dir (Linux)
+        if: runner.os == 'Linux'
+        run: cp -r "${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/out" "${{ github.workspace }}/out"
+
+      - name: Copy output dir (Windows)
         if: runner.os == 'Windows'
         run: copy -Path "${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/out" -Destination "${{ github.workspace }}/out" -Recurse
 
