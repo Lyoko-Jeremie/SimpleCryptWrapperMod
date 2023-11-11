@@ -47,10 +47,8 @@ jobs:
           yarn install
           yarn run ts:BeforeSC2
           yarn run webpack:BeforeSC2
-          yarn run webpack:BeforeSC2-comp
           yarn run ts:ForSC2
           yarn run webpack:insertTools
-          yarn run tras:babel
 
       - name: Build SimpleCryptWrapper
         working-directory: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper
@@ -71,17 +69,23 @@ jobs:
       - name: Copy packModZip
         uses: Lyoko-Jeremie/js-copy-github-action@master
         with:
+          srcBase: ${{ github.workspace }}/ModLoader/dist-insertTools
           source: ${{ github.workspace }}/ModLoader/dist-insertTools/packModZip.js
+          destBase: ${{ github.workspace }}/out
           target: ${{ github.workspace }}/out/packModZip.js
       - name: Copy SimpleCryptWrapper
         uses: Lyoko-Jeremie/js-copy-github-action@master
         with:
+          srcBase: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist
           source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist/SimpleCryptWrapper.js
+          destBase: ${{ github.workspace }}/out
           target: ${{ github.workspace }}/out/SimpleCryptWrapper.js
       - name: Copy encryptTool
         uses: Lyoko-Jeremie/js-copy-github-action@master
         with:
+          srcBase: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist-tools
           source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist-tools/encryptTool.js
+          destBase: ${{ github.workspace }}/out
           target: ${{ github.workspace }}/out/encryptTool.js
 
       - name: Upload ModLoader Package
