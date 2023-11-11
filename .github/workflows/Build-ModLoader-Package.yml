@@ -38,7 +38,7 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          path: ModLoader/mod
+          path: ModLoader/mod/SimpleCryptWrapper
           submodules: recursive
 
       - name: Build ModLoader
@@ -52,7 +52,7 @@ jobs:
           yarn run webpack:insertTools
           yarn run tras:babel
 
-      - name: Build ModLoader
+      - name: Build SimpleCryptWrapper
         working-directory: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper
         run: |
           yarn install
