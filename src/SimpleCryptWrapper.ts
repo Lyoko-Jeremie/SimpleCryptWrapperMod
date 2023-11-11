@@ -1,11 +1,9 @@
-import JSZip from "jszip";
-import type {LifeTimeCircleHook, LogWrapper} from "../../../dist-BeforeSC2/ModLoadController";
+import type {LogWrapper} from "../../../dist-BeforeSC2/ModLoadController";
 import type {SC2DataManager} from "../../../dist-BeforeSC2/SC2DataManager";
 import type {ModUtils} from "../../../dist-BeforeSC2/Utils";
-import type {ModBootJson, ModInfo} from "../../../dist-BeforeSC2/ModLoader";
-import {isArray, isNil, isString} from 'lodash';
+import {isString} from 'lodash';
 import {ready} from 'libsodium-wrappers';
-import {decryptFile, calcKeyFromPasswordBrowser} from './CryptoTool';
+import {calcKeyFromPasswordBrowser, decryptFile} from './CryptoTool';
 
 export interface CryptDataItem {
     crypt: string;
@@ -18,7 +16,7 @@ export class SimpleCryptWrapper {
 
     private readonly ModName: string = '';
 
-    private readonly infoCreateOk = false;
+    private readonly infoCreateOk: boolean = false;
 
     constructor(
         public gSC2DataManager: SC2DataManager,
@@ -104,17 +102,44 @@ export class SimpleCryptWrapper {
                     this.logger.warn(`[${this.ModName}] cannot get file from zip [${nn[0]}]`);
                     continue;
                 }
-                const key = await calcKeyFromPasswordBrowser(await this.readPassword(), salt);
-                const decryptZip = await decryptFile(
-                    crypt,
-                    key,
-                    nonce,
-                ).catch(async (E) => {
-                    console.error(`[${this.ModName}] decrypt error`, [nn, E]);
-                    this.logger.error(`[${this.ModName}] decrypt error [${nn[0]}] [${E?.message ? E.message : E}]`);
-                    await window.modSweetAlert2Mod.fire(`解密失败，密码错误: [${E?.message ? E.message : E}]`);
-                });
+                const tryDecrypt = async (password: string) => {
+                    const key = await calcKeyFromPasswordBrowser(password, salt);
+                    return await decryptFile(
+                        crypt,
+                        key,
+                        nonce,
+                    );
+                }
+                let decryptZip: Uint8Array | undefined = undefined;
+                // try read
+                try {
+                    const savedP = this.tryLoadPassword();
+                    if (isString(savedP)) {
+                        decryptZip = await tryDecrypt(savedP);
+                    }
+                } catch (E: Error | any) {
+                    this.cleanSavedPassword();
+                    console.error(`[${this.ModName}] decrypt error by read saved password`, [nn, E]);
+                    this.logger.error(`[${this.ModName}] decrypt error by read saved password [${nn[0]}] [${E?.message ? E.message : E}]`);
+                    await window.modSweetAlert2Mod.fire(`Mod[${this.ModName}] 解密失败，已存储的密码无效，清除已存储的密码。 [${E?.message ? E.message : E}]`);
+                }
                 if (!decryptZip) {
+                    // try input
+                    const inputP = await this.readPassword();
+                    try {
+                        decryptZip = await tryDecrypt(inputP);
+                    } catch (E: Error | any) {
+                        console.error(`[${this.ModName}] decrypt error by input password`, [nn, E]);
+                        this.logger.error(`[${this.ModName}] decrypt error by input password [${nn[0]}] [${E?.message ? E.message : E}]`);
+                        await window.modSweetAlert2Mod.fire(`Mod[${this.ModName}] 解密失败，输入的密码错误。 [${E?.message ? E.message : E}]`);
+                        return;
+                    }
+                    this.savePassword(inputP);
+                }
+                if (!decryptZip) {
+                    // never go there
+                    console.error(`[${this.ModName}] decrypt error, no valid decrypt password`, [nn]);
+                    this.logger.error(`[${this.ModName}] decrypt error, no valid decrypt password [${nn[0]}]`);
                     return;
                 }
                 if (!await this.gModUtils.lazyRegisterNewModZipData(decryptZip)) {
@@ -131,13 +156,12 @@ export class SimpleCryptWrapper {
         }
     }
 
-    // TODO get password from user input
+    // get password from user input
     async readPassword() {
         if (!this.infoCreateOk) {
             console.log(`[SimpleCryptWrapper] cannot call readPassword(), constructor not completed`);
             this.logger.log(`[SimpleCryptWrapper] cannot call readPassword(), constructor not completed`);
         }
-        // TODO
         try {
             const {value: password} = await window.modSweetAlert2Mod.fireWithOptions({
                 title: `请输入${this.ModName}的密码`,
@@ -162,20 +186,35 @@ export class SimpleCryptWrapper {
         return undefined;
     }
 
+    cleanSavedPassword() {
+        if (!this.infoCreateOk) {
+            console.log(`[SimpleCryptWrapper] cannot call savePassword(), constructor not completed`);
+            this.logger.log(`[SimpleCryptWrapper] cannot call savePassword(), constructor not completed`);
+        }
+        // clean saved password in localstorage
+        localStorage.removeItem(`SimpleCryptWrapper_${this.ModName}_password`);
+    }
+
     tryLoadPassword() {
         if (!this.infoCreateOk) {
             console.log(`[SimpleCryptWrapper] cannot call tryLoadPassword(), constructor not completed`);
             this.logger.log(`[SimpleCryptWrapper] cannot call tryLoadPassword(), constructor not completed`);
         }
         // try load from localstorage
+        const p = localStorage.getItem(`SimpleCryptWrapper_${this.ModName}_password`);
+        if (isString(p)) {
+            return p;
+        }
+        return undefined;
     }
 
-    savePassword() {
+    savePassword(password: string) {
         if (!this.infoCreateOk) {
             console.log(`[SimpleCryptWrapper] cannot call savePassword(), constructor not completed`);
             this.logger.log(`[SimpleCryptWrapper] cannot call savePassword(), constructor not completed`);
         }
         // encrypt and save to localstorage
+        localStorage.setItem(`SimpleCryptWrapper_${this.ModName}_password`, password);
     }
 
     init() {
