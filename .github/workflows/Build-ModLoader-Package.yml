@@ -85,7 +85,15 @@ jobs:
           target: ${{ github.workspace }}/out/encryptTool.js
 
       - name: Upload ModLoader Package
+        if: runner.os == 'Linux'
         uses: actions/upload-artifact@v3
         with:
-          name: SimpleCryptWrapper Package {{ runner.os }}
+          name: SimpleCryptWrapper Package Linux
+          path: ${{ github.workspace }}/out
+
+      - name: Upload ModLoader Package
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v3
+        with:
+          name: SimpleCryptWrapper Package Windows
           path: ${{ github.workspace }}/out
