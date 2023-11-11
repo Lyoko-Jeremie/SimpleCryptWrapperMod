@@ -11,6 +11,8 @@ export interface CryptDataItem {
     salt: string;
 }
 
+const PasswordHintFile = 'passwordHintFile.txt';
+
 export class SimpleCryptWrapper {
     private logger: LogWrapper;
 
@@ -62,6 +64,11 @@ export class SimpleCryptWrapper {
                 console.error(`[${this.ModName}] Mod not found`);
                 this.logger.error(`[${this.ModName}] Mod not found`);
                 return;
+            }
+
+            let passwordHint: string | undefined = undefined;
+            if (mod.mod.bootJson.additionFile.find(T => T === PasswordHintFile)) {
+                passwordHint = await mod.zip.zip.file(PasswordHintFile)?.async('string');
             }
 
             const cdi = new Map<string, CryptDataItem>();
@@ -125,7 +132,7 @@ export class SimpleCryptWrapper {
                 }
                 if (!decryptZip) {
                     // try input
-                    const inputP = await this.readPassword();
+                    const inputP = await this.inputPassword(passwordHint);
                     try {
                         decryptZip = await tryDecrypt(inputP);
                     } catch (E: Error | any) {
@@ -157,14 +164,14 @@ export class SimpleCryptWrapper {
     }
 
     // get password from user input
-    async readPassword() {
+    async inputPassword(passwordHint: string | undefined = undefined) {
         if (!this.infoCreateOk) {
             console.log(`[SimpleCryptWrapper] cannot call readPassword(), constructor not completed`);
             this.logger.log(`[SimpleCryptWrapper] cannot call readPassword(), constructor not completed`);
         }
         try {
             const {value: password} = await window.modSweetAlert2Mod.fireWithOptions({
-                title: `请输入${this.ModName}的密码`,
+                title: `请输入${this.ModName}的密码\n${passwordHint ? passwordHint : ''}`,
                 input: 'password',
                 inputLabel: '密码',
                 inputPlaceholder: `请输入${this.ModName}的密码`,
