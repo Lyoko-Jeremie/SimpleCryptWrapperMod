@@ -1,0 +1,87 @@
+
+name: Build Package
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+
+      matrix:
+        # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
+        os: [ ubuntu-latest ]
+        node-version: [ 18.x ]
+
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: ModLoader
+        uses: actions/checkout@v4
+        with:
+          repository: Lyoko-Jeremie/sugarcube-2-ModLoader
+          path: ModLoader
+          ref: master
+
+#          submodules: recursive
+
+      - uses: actions/checkout@v4
+        with:
+          path: ModLoader/mod
+          submodules: recursive
+
+      - name: Build ModLoader
+        working-directory: ${{ github.workspace }}/ModLoader
+        run: |
+          yarn install
+          yarn run ts:BeforeSC2
+          yarn run webpack:BeforeSC2
+          yarn run webpack:BeforeSC2-comp
+          yarn run ts:ForSC2
+          yarn run webpack:insertTools
+          yarn run tras:babel
+
+      - name: Build ModLoader
+        working-directory: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper
+        run: |
+          yarn install
+          yarn run build:ts
+          yarn run build:webpack
+          yarn run webpack:tools
+
+      - name: Copy output dir
+        if: runner.os == 'Windows'
+        run: copy -Path "${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/out" -Destination "${{ github.workspace }}/out" -Recurse
+
+      - name: Copy packModZip
+        uses: Lyoko-Jeremie/js-copy-github-action@master
+        with:
+          source: ${{ github.workspace }}/ModLoader/dist-insertTools/packModZip.js
+          target: ${{ github.workspace }}/out/packModZip.js
+      - name: Copy SimpleCryptWrapper
+        uses: Lyoko-Jeremie/js-copy-github-action@master
+        with:
+          source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist/SimpleCryptWrapper.js
+          target: ${{ github.workspace }}/out/SimpleCryptWrapper.js
+      - name: Copy encryptTool
+        uses: Lyoko-Jeremie/js-copy-github-action@master
+        with:
+          source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist-tools/encryptTool.js
+          target: ${{ github.workspace }}/out/encryptTool.js
+
+      - name: Upload ModLoader Package
+        uses: actions/upload-artifact@v3
+        with:
+          name: SimpleCryptWrapper Package
+          path: ${{ github.workspace }}/out
