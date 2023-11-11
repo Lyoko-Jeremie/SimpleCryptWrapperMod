@@ -1,0 +1,38 @@
+{
+  "name": "<>",
+  "version": "1.0.0",
+  "styleFileList": [
+  ],
+  "scriptFileList_earlyload": [
+  ],
+  "scriptFileList_inject_early": [
+    "SimpleCryptWrapper.js"
+  ],
+  "scriptFileList_preload": [
+  ],
+  "scriptFileList": [
+  ],
+  "tweeFileList": [
+  ],
+  "imgFileList": [
+  ],
+  "imgFileReplaceList": [
+  ],
+  "additionFile": [
+    "README.md"
+  ],
+  "additionBinaryFile": [
+  ],
+  "addonPlugin": [
+  ],
+  "dependenceInfo": [
+    {
+      "modName": "ModLoader",
+      "version": "^2.5.1"
+    },
+    {
+      "modName": "SweetAlert2Mod",
+      "version": "^1.0.0"
+    }
+  ]
+}
