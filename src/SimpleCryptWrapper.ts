@@ -59,7 +59,7 @@ export class SimpleCryptWrapper {
             console.log(`[${this.ModName}] decrypt`);
             this.logger.log(`[${this.ModName}] decrypt`);
             await ready;
-            const mod = this.gSC2DataManager.getModLoader().getModByNameOne('CryptoI18n');
+            const mod = this.gSC2DataManager.getModLoader().getModByNameOne(this.ModName);
             if (!mod) {
                 console.error(`[${this.ModName}] Mod not found`);
                 this.logger.error(`[${this.ModName}] Mod not found`);
