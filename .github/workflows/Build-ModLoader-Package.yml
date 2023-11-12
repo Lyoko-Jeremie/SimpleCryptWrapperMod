@@ -19,8 +19,8 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
         os: [ ubuntu-latest ]
-#        os: [ ubuntu-latest , windows-latest ]
         node-version: [ 18.x ]
+        #        os: [ ubuntu-latest , windows-latest ]
 
     steps:
       - name: Use Node.js ${{ matrix.node-version }}
