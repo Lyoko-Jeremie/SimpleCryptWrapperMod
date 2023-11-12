@@ -81,6 +81,13 @@ jobs:
           source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist/SimpleCryptWrapper.js
           destBase: ${{ github.workspace }}/out
           target: ${{ github.workspace }}/out
+      - name: Copy earlyload
+        uses: Lyoko-Jeremie/js-copy-github-action@master
+        with:
+          srcBase: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist/earlyload
+          source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist/earlyload/earlyload.js
+          destBase: ${{ github.workspace }}/out
+          target: ${{ github.workspace }}/out
       - name: Copy encryptTool
         uses: Lyoko-Jeremie/js-copy-github-action@master
         with:

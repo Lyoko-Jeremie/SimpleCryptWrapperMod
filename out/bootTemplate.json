@@ -4,6 +4,7 @@
   "styleFileList": [
   ],
   "scriptFileList_earlyload": [
+    "earlyload.js"
   ],
   "scriptFileList_inject_early": [
     "SimpleCryptWrapper.js"
