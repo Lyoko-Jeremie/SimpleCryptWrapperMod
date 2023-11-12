@@ -5,7 +5,7 @@ import {
     to_base64,
 } from 'libsodium-wrappers-sumo';
 
-import {readFile, writeFile} from 'fs';
+import {readFile, writeFile, unlink} from 'fs';
 import {join, basename} from 'path';
 import {promisify} from 'util';
 import {exit} from 'process';
@@ -180,6 +180,13 @@ async function runScript(scriptPath: string, args: string[]) {
         console.log('packModZip error', rCode);
         return;
     }
+
+    console.log('clean temp file...');
+    await promisify(unlink)('boot.json');
+    await promisify(unlink)(rEncrypt.crypt);
+    await promisify(unlink)(rEncrypt.salt);
+    await promisify(unlink)(rEncrypt.nonce);
+    await promisify(unlink)(passwordHintFilePath);
 
     console.log('=== Congratulation! EncryptMod done! Everything is ok. ===');
 })().catch(E => {
