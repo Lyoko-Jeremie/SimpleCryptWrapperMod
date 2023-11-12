@@ -13,14 +13,14 @@ import {generateNewSalt, calcKeyFromPassword, encryptFile, decryptFile} from "..
 import * as process from "process";
 import * as child_process from "child_process";
 import * as console from "console";
-import * as JSON5 from "json5";
+import JSON5 from "json5";
 
 function isEqual(arr1: Uint8Array, arr2: Uint8Array): boolean {
     if (arr1.length !== arr2.length) {
-        return false
+        return false;
     }
 
-    return arr1.every((value, index) => value === arr2[index])
+    return arr1.every((value, index) => value === arr2[index]);
 }
 
 async function encryptModZipFile(p: string, password: string) {
@@ -72,9 +72,16 @@ async function runScript(scriptPath: string, args: string[]) {
     return new Promise((resolve, reject) => {
 
         // keep track of whether callback has been invoked to prevent multiple invocations
-        var invoked = false;
+        let invoked = false;
 
-        var process = child_process.spawn(scriptPath);
+        const process = child_process.spawn('node', [scriptPath].concat(args));
+
+        process.stdout.on('data', function (data) {
+            console.log(data.toString());
+        });
+        process.stderr.on('data', function (data) {
+            console.error(data.toString());
+        });
 
         // listen for errors as they may prevent the exit event from firing
         process.on('error', function (err) {
@@ -167,7 +174,7 @@ async function runScript(scriptPath: string, args: string[]) {
 
     await promisify(writeFile)('boot.json', JSON5.stringify(bootTemplateJson, undefined, 2), {encoding: 'utf-8'});
 
-    const rCode = await runScript(packModZipJsFilePath, []);
+    const rCode = await runScript(packModZipJsFilePath, ['boot.json']);
 
     if (rCode !== 0) {
         console.log('packModZip error', rCode);
