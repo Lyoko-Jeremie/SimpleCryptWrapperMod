@@ -18,7 +18,8 @@ jobs:
 
       matrix:
         # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
-        os: [ ubuntu-latest , windows-latest ]
+        os: [ ubuntu-latest ]
+#        os: [ ubuntu-latest , windows-latest ]
         node-version: [ 18.x ]
 
     steps:
@@ -72,21 +73,21 @@ jobs:
           srcBase: ${{ github.workspace }}/ModLoader/dist-insertTools
           source: ${{ github.workspace }}/ModLoader/dist-insertTools/packModZip.js
           destBase: ${{ github.workspace }}/out
-          target: ${{ github.workspace }}/out/packModZip.js
+          target: ${{ github.workspace }}/out
       - name: Copy SimpleCryptWrapper
         uses: Lyoko-Jeremie/js-copy-github-action@master
         with:
           srcBase: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist
           source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist/SimpleCryptWrapper.js
           destBase: ${{ github.workspace }}/out
-          target: ${{ github.workspace }}/out/SimpleCryptWrapper.js
+          target: ${{ github.workspace }}/out
       - name: Copy encryptTool
         uses: Lyoko-Jeremie/js-copy-github-action@master
         with:
           srcBase: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist-tools
           source: ${{ github.workspace }}/ModLoader/mod/SimpleCryptWrapper/dist-tools/encryptTool.js
           destBase: ${{ github.workspace }}/out
-          target: ${{ github.workspace }}/out/encryptTool.js
+          target: ${{ github.workspace }}/out
 
       - name: Upload ModLoader Package
         if: runner.os == 'Linux'
