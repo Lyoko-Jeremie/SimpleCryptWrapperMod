@@ -93,12 +93,12 @@ jobs:
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v3
         with:
-          name: SimpleCryptWrapper Package Linux
+          name: SimpleCryptWrapper Package (Linux Build)
           path: ${{ github.workspace }}/out
 
       - name: Upload ModLoader Package
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v3
         with:
-          name: SimpleCryptWrapper Package Windows
+          name: SimpleCryptWrapper Package (Windows Build)
           path: ${{ github.workspace }}/out

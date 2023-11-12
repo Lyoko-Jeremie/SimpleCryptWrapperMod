@@ -101,6 +101,7 @@ async function runScript(scriptPath: string, args: string[]) {
     const configJsonFilePath = process.argv[3];
     const bootTemplateJsonPath = process.argv[4];
     const modPath = process.argv[5];
+    console.log('packModZipJsFilePath', packModZipJsFilePath);
     console.log('configJsonFilePath', configJsonFilePath);
     console.log('bootTemplateJsonPath', bootTemplateJsonPath);
     console.log('modPath', modPath);
