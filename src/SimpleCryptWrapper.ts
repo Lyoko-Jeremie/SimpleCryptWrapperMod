@@ -4,6 +4,9 @@ import type {ModUtils} from "../../../dist-BeforeSC2/Utils";
 import {isString} from 'lodash';
 import {ready} from 'libsodium-wrappers';
 import {calcKeyFromPasswordBrowser, decryptFile} from './CryptoTool';
+import {getStringTable} from "./GUI_StringTable/StringTable";
+
+const ST = getStringTable();
 
 export interface CryptDataItem {
     crypt: string;
@@ -128,7 +131,7 @@ export class SimpleCryptWrapper {
                     this.cleanSavedPassword();
                     console.error(`[${this.ModName}] decrypt error by read saved password`, [nn, E]);
                     this.logger.error(`[${this.ModName}] decrypt error by read saved password [${nn[0]}] [${E?.message ? E.message : E}]`);
-                    await window.modSweetAlert2Mod.fire(`Mod[${this.ModName}] 解密失败，已存储的密码无效，清除已存储的密码。 [${E?.message ? E.message : E}]`);
+                    await window.modSweetAlert2Mod.fire(`Mod[${this.ModName}] ${ST.decryptFailWithWrongSavePassword} [${E?.message ? E.message : E}]`);
                 }
                 if (!decryptZip) {
                     // try input
@@ -138,7 +141,7 @@ export class SimpleCryptWrapper {
                     } catch (E: Error | any) {
                         console.error(`[${this.ModName}] decrypt error by input password`, [nn, E]);
                         this.logger.error(`[${this.ModName}] decrypt error by input password [${nn[0]}] [${E?.message ? E.message : E}]`);
-                        await window.modSweetAlert2Mod.fire(`Mod[${this.ModName}] 解密失败，输入的密码错误。 [${E?.message ? E.message : E}]`);
+                        await window.modSweetAlert2Mod.fire(`Mod[${this.ModName}] ${ST.decryptFailWithWrongInputPassword} [${E?.message ? E.message : E}]`);
                         return;
                     }
                     this.savePassword(inputP);
@@ -171,10 +174,10 @@ export class SimpleCryptWrapper {
         }
         try {
             const {value: password} = await window.modSweetAlert2Mod.fireWithOptions({
-                title: `请输入${this.ModName}的密码\n${passwordHint ? passwordHint : ''}`,
+                title: `${ST.inputPasswordTitle(this.ModName)}\n${passwordHint ? passwordHint : ''}`,
                 input: 'password',
-                inputLabel: '密码',
-                inputPlaceholder: `请输入${this.ModName}的密码`,
+                inputLabel: `${ST.password}`,
+                inputPlaceholder: `${ST.inputPasswordPlaceholder(this.ModName)}`,
                 inputAttributes: {
                     maxlength: '1000',
                     autocapitalize: 'off',
@@ -183,7 +186,7 @@ export class SimpleCryptWrapper {
             });
 
             if (password) {
-                await window.modSweetAlert2Mod.fire(`你输入的密码是: ${password}`);
+                await window.modSweetAlert2Mod.fire(`${ST.yourInputPasswordIs} ${password}`);
             }
 
             return password;
