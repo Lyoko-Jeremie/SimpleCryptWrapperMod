@@ -5,6 +5,8 @@ import {isString} from 'lodash';
 import {ready} from 'libsodium-wrappers';
 import {calcKeyFromPasswordBrowser, decryptFile} from './CryptoTool';
 import {getStringTable} from "./GUI_StringTable/StringTable";
+import {ISimpleCryptWrapper} from "./ISimpleCryptWrapper";
+import {setRef} from "./CalcRef";
 
 const ST = getStringTable();
 
@@ -16,7 +18,7 @@ export interface CryptDataItem {
 
 const PasswordHintFile = 'passwordHintFile.txt';
 
-export class SimpleCryptWrapper {
+export class SimpleCryptWrapper implements ISimpleCryptWrapper {
     private logger: LogWrapper;
 
     private readonly ModName: string = '';
@@ -38,6 +40,8 @@ export class SimpleCryptWrapper {
 
                     this.ModName = ModName;
                     this.infoCreateOk = true;
+
+                    setRef(ModName, this);
 
                     return;
                 } else {

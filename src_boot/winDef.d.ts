@@ -9,6 +9,6 @@ declare global {
 
         jQuery: jQuery;
 
-        modSimpleCryptWrapper: SimpleCryptWrapper;
+        modSimpleCryptWrapperRefList: Map<string, SimpleCryptWrapper>;
     }
 }

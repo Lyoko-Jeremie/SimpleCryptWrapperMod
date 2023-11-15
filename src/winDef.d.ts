@@ -12,6 +12,6 @@ declare global {
 
         modSweetAlert2Mod: SweetAlert2Mod;
 
-        modSimpleCryptWrapper: SimpleCryptWrapper;
+        modSimpleCryptWrapperRefList: Map<string, SimpleCryptWrapper>;
     }
 }
