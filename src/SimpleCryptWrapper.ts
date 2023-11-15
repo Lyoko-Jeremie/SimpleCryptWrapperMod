@@ -64,8 +64,8 @@ export class SimpleCryptWrapper {
             await ready;
             const mod = this.gSC2DataManager.getModLoader().getModByNameOne(this.ModName);
             if (!mod) {
-                console.error(`[${this.ModName}] Mod not found`);
-                this.logger.error(`[${this.ModName}] Mod not found`);
+                console.error(`[${this.ModName}] cannot find inner Mod , maybe the package is broken`);
+                this.logger.error(`[${this.ModName}] cannot find inner Mod , maybe the package is broken`);
                 return;
             }
 
